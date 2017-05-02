@@ -1,27 +1,20 @@
 require 'rails_helper'
 
-feature 'Deleting a post' do
+feature 'deleting posts' do
   background do
-    post = create(:post, caption: 'Abs for days.')
-    visit "/posts/#{post.id}"
-    # find(:xpath, '//a[contains(@href,"posts/#{post.id}")]').click
-    click_link 'Edit Post'
+    user = create :user
+    post = create(:post, caption: 'Abs for days.', user_id: user.id)
+
+    sign_in_with user
   end
-  scenario 'Deleting the post' do
-  click_link 'Delete Post'
-  expect(page).to have_content('Your post has been deleted.')
-  expect(page).to_not have_content('Abs for days.')
+  scenario 'can delete a post via the interface' do
+    visit '/'
+    find(:xpath, "//a[contains(@href,'posts/1')]").click
+    click_link 'Edit Post'
+
+    click_link 'Delete Post'
+
+    expect(page).to have_content('Your post has been deleted.')
+    expect(page).to_not have_content('Abs for days.')
   end
 end
-
-
-
-
-# create an example post using factory_girl
-# visit the root route
-# click on the image to 'show' the individual post
-# click on the 'Edit Post' button to enter the edit view
-# click on the 'Delete Post' button
-# expect to be routed to the root again.
-# expect to see the message "Problem solved!  Post deleted."
-# expect to not see the old post anymore.

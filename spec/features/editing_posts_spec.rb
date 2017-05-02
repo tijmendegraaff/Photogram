@@ -1,26 +1,48 @@
 require 'rails_helper'
 
-feature 'Editing a post' do
+feature 'editing posts' do
   background do
-    post = create(:post)
-    visit "/posts/#{post.id}"
-    # find(:xpath, '//a[contains(@href,"posts/#{post.id}")]').click
-    click_link 'Edit Post'
-  end
-  scenario 'Can edit a post' do
-  fill_in 'Caption', with: "Oh god, you weren't meant to see this picture!"
-  click_button 'Update Post'
+    user = create :user
+    user_two = create(:user, email: 'hi@hi.com',
+                             user_name: 'BennyBoy',
+                             id: user.id + 1)
+    post = create(:post, user_id: user.id)
+    post_two = create(:post, user_id: user.id + 1)
 
-  expect(page).to have_content("Post updated.")
-  expect(page).to have_content("Oh god, you weren't meant to see this picture!")
+    sign_in_with user
+    visit '/'
   end
-  scenario "Can't edit with no picture selected" do
-  attach_file('Image', "spec/files/coffee.zip")
-  click_button 'Update Post'
-  expect(page).to have_content("Update failed.  Please check the form.")
+
+  scenario 'can edit a post as the owner' do
+    find(:xpath, "//a[contains(@href,'posts/1')]").click
+    expect(page).to have_content('Edit Post')
+
+    click_link 'Edit Post'
+    fill_in 'post_caption', with: "Oh god, you weren't meant to see this picture!"
+    click_button 'Update Post'
+
+    expect(page).to have_content('Post updated.')
+    expect(page).to have_content("Oh god,
+                                  you weren't meant to see this picture!")
   end
-  # starting after the actions in the background block:
-  # fill in the 'Image' field with nothing
-  # click the 'Update Post' button
-  # expect to see the message: 'Something is wrong with your form!'
+
+  scenario "cannot edit a post that doesn't belong to you via the show page" do
+    find(:xpath, "//a[contains(@href,'posts/2')]").click
+    expect(page).to_not have_content('Edit Post')
+  end
+
+  scenario "cannot edit a post that doesn't belong to you via url path" do
+    visit '/posts/2/edit'
+    expect(page.current_path).to eq root_path
+    expect(page).to have_content("That post doesn't belong to you!")
+  end
+
+  scenario "a post won't update without an attached image" do
+    find(:xpath, "//a[contains(@href,'posts/1')]").click
+    click_link 'Edit Post'
+    attach_file('post_image', 'spec/files/coffee.zip')
+    click_button 'Update Post'
+
+    expect(page).to have_content('Upload an image: is invalid')
+  end
 end
