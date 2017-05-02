@@ -18,6 +18,7 @@ gem 'simple_form'
 gem "paperclip", "~> 5.0.0"
 gem 'bootstrap-sass', '~> 3.3.6'
 gem 'devise'
+gem 'kaminari'
 # gem 'redis', '~> 3.0'
 # gem 'bcrypt', '~> 3.1.7'
 
