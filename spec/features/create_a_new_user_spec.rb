@@ -12,7 +12,7 @@ feature 'Creating a new user' do
     # Fill in the 'Email' field with 'sxyrailsdev@myspace.com'
     fill_in 'Email', with: 'sxyrailsdev@myspace.com'
     # Fill in the 'Password' field with 'supersecret'
-    fill_in 'Password', with: 'supersecret'
+    fill_in 'Password', with: 'supersecret', match: :first
     # Fill in the 'Password confirmation' field with 'supersecret'
     fill_in 'Password confirmation', with: 'supersecret'
     # Click the 'Sign up' button
