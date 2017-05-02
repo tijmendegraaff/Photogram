@@ -14,4 +14,13 @@ feature 'Editing a post' do
   expect(page).to have_content("Post updated.")
   expect(page).to have_content("Oh god, you weren't meant to see this picture!")
   end
+  scenario "Can't edit with no picture selected" do
+  attach_file('Image', "spec/files/coffee.zip")
+  click_button 'Update Post'
+  expect(page).to have_content("Update failed.  Please check the form.")
+  end
+  # starting after the actions in the background block:
+  # fill in the 'Image' field with nothing
+  # click the 'Update Post' button
+  # expect to see the message: 'Something is wrong with your form!'
 end
